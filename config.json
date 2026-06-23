@@ -1,0 +1,34 @@
+{
+    "// poll_interval_seconds": "How often to check the Outlook calendar + local Teams windows.",
+    "poll_interval_seconds": 15,
+
+    "// prealert_seconds": "Start nagging this many seconds BEFORE meeting start (0 = exactly at start).",
+    "prealert_seconds": 120,
+
+    "// renag_seconds": "Re-fire toast + sound every N seconds while you remain un-joined.",
+    "renag_seconds": 30,
+
+    "// stop_after_minutes": "Give up nagging this many minutes after scheduled start.",
+    "stop_after_minutes": 10,
+
+    "// snooze_seconds": "If you click Snooze, suppress alerts for this meeting for this long.",
+    "snooze_seconds": 60,
+
+    "// only_online_meetings": "If true, nag only for events that are Teams online meetings. Set false to nag for ALL calendar events.",
+    "only_online_meetings": true,
+
+    "// ignore_all_day": "Skip all-day events.",
+    "ignore_all_day": true,
+
+    "// ignore_categories": "Skip events that have any of these Outlook categories (case-insensitive).",
+    "ignore_categories": ["No Nag"],
+
+    "// ignore_subjects_contains": "Skip events whose subject contains any of these substrings (case-insensitive).",
+    "ignore_subjects_contains": ["Focus time", "Lunch"],
+
+    "// local_presence_enabled": "If true, suppress alerts when a Teams meeting window for the event's subject is open on this PC. For meetings joined on phone / other devices, click 'I'm in it' on the toast.",
+    "local_presence_enabled": true,
+
+    "// sound": "Path to a .wav file to play, or 'beep' for a system beep, or '' to disable sound.",
+    "sound": "beep"
+}

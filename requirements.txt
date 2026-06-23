@@ -1,0 +1,4 @@
+windows-toasts>=1.1.0
+# pywin32 provides win32com (Outlook automation) and win32gui (window enum).
+# 306+ ships Windows ARM64 wheels.
+pywin32>=306
