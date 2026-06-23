@@ -6,14 +6,14 @@ started and you're not joined yet, it fires an actionable toast + sound every
 
 ## How it works
 
-- **Calendar:** reads your Outlook desktop calendar via COM (no sign-in — uses
+- **Calendar:** reads your Outlook desktop calendar via COM (no sign-in - uses
   your already-signed-in Outlook profile).
 - **"Am I joined?" detection:**
   - **This PC:** enumerates Teams windows; if a window titled with the
     meeting subject (e.g. `Sprint planning | Microsoft Teams`) is open, the
     nag stays quiet.
   - **Other devices (phone, web, another PC):** click the **I'm in it**
-    button on the toast — that suppresses alerts for the rest of the
+    button on the toast - that suppresses alerts for the rest of the
     meeting.
 
 ## Why no Microsoft Graph?
@@ -28,7 +28,8 @@ isn't available. Local-only mode is the workaround.
 ## Requirements
 
 - Windows 10 / 11
-- Python 3.11+ (3.13 recommended — pywin32 has ARM64 wheels for it)
+- Python 3.11+ (**3.14 recommended** - on win-arm64 it's the only build that
+  bundles `tkinter`, which the settings UI needs)
 - Outlook desktop with a configured mail profile (the same one you use
   every day)
 - Teams desktop (new or classic)
@@ -46,9 +47,15 @@ that it's instant.
 Useful flags:
 
 ```powershell
-.\run.ps1 -Probe              # List upcoming events from Outlook and exit
-.\run.ps1 -ListTeamsWindows   # Print all Teams window titles (for tuning detection)
+.\run.ps1 -Config             # Open the settings UI (see below)
 .\run.ps1 -Reinstall          # Force pip reinstall
+```
+
+The underlying script also accepts:
+
+```powershell
+.\.venv\Scripts\python.exe nag.py --probe                # List upcoming events and exit
+.\.venv\Scripts\python.exe nag.py --list-teams-windows   # Dump Teams window titles
 ```
 
 ### Auto-start at login (optional)
@@ -62,8 +69,13 @@ Useful flags:
 
 ## Configuration
 
-Edit [config.json](config.json). Keys starting with `//` are comments and are
-ignored.
+Easiest: run `.\run.ps1 -Config` to open a small Tk window with every
+setting, inline help, validation, and a sound picker. Changes are written
+back to [config.json](config.json) (your `// ...` comment keys are
+preserved) and take effect the next time `nag.py` starts.
+
+Or edit [config.json](config.json) by hand. Keys starting with `//` are
+comments and are ignored.
 
 | Key | Default | What it does |
 |---|---|---|
@@ -91,19 +103,20 @@ ignored.
 | Button | What it does |
 |---|---|
 | **Join** | Opens the meeting's Teams join URL |
-| **I'm in it** | Marks the meeting as joined elsewhere — silences until end + 1 min |
+| **I'm in it** | Marks the meeting as joined elsewhere - silences until end + 1 min |
 | **Snooze 1 min** | Stops nagging for `snooze_seconds` |
 | **Dismiss** | Stops nagging for this meeting permanently (until next occurrence) |
 
 ## Files
 
-- [nag.py](nag.py) — main loop
-- [outlook_calendar.py](outlook_calendar.py) — Outlook COM calendar reader
-- [local_presence.py](local_presence.py) — Teams window detection
-- [notifier.py](notifier.py) — toast + sound
-- [models.py](models.py) — shared `MeetingEvent` dataclass
-- [config.json](config.json) — tunables
-- [run.ps1](run.ps1) — venv bootstrap + launcher
+- [nag.py](nag.py) - main loop
+- [outlook_calendar.py](outlook_calendar.py) - Outlook COM calendar reader
+- [local_presence.py](local_presence.py) - Teams window detection
+- [notifier.py](notifier.py) - toast + sound
+- [models.py](models.py) - shared `MeetingEvent` dataclass
+- [config.json](config.json) - tunables
+- [config_ui.py](config_ui.py) - Tk settings editor (`run.ps1 -Config`)
+- [run.ps1](run.ps1) - venv bootstrap + launcher
 
 ## Troubleshooting
 
@@ -119,5 +132,9 @@ ignored.
   limitation. Click **I'm in it** on the toast.
 - **Toast doesn't show buttons**: Windows Focus Assist may be silencing
   notifications. Turn off "Do not disturb" or whitelist the app.
-- **`No usable Python found`**: install Python 3.13 from
+- **`No usable Python found`**: install Python 3.14 from
   <https://python.org/downloads/windows/> (ARM64 build for Snapdragon PCs).
+- **`-Config` says it's rebuilding the venv**: that's expected if your
+  current venv was built on a Python without `tkinter` (notably 3.13
+  win-arm64). It will re-create `.venv` on a Python that has it and
+  reinstall the deps. Subsequent runs are fast.
